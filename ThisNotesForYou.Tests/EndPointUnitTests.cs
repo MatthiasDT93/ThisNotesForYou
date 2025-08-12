@@ -1,5 +1,6 @@
 using LiteDB;
 using Microsoft.AspNetCore.Http.HttpResults;
+using ThisNotesForYou;
 
 namespace ThisNotesForYou.Tests;
 
