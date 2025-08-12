@@ -29,6 +29,11 @@ public static class Endpoints
 
     public static IResult DeleteNote(Guid id, ILiteCollection<Note> col)
     {
-        return Results.NoContent();
+        if (col.FindById(id) != null)
+        {
+            col.Delete(id);
+            return Results.NoContent();
+        }
+        return Results.NotFound();
     }
 }
