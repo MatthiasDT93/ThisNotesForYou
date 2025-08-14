@@ -19,18 +19,6 @@ public class Note
 }
 
 
-public class NoteDto
-{
-    public string Title { get; set; }
-    public string Text { get; set; }
-
-    public NoteDto() { }
-
-    public NoteDto(string title, string text)
-    {
-        Title = title;
-        Text = text;
-    }
-}
+public record NoteDto(Guid Id, string Title, string Text, DateTime CreatedAt);
 
 public record CreateNote(string Title, string Text);

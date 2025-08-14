@@ -1,0 +1,95 @@
+﻿@page "/"
+@using ThisNotesForYou;
+@using Microsoft.AspNetCore.Components.Forms
+@using ThisNotesForYou.Blazor.Services
+@inject ThisNotesForYou.Blazor.Services.NotesClient Api
+@inject IJSRuntime JS
+
+
+<PageTitle>Notes</PageTitle>
+
+<h1>Notes</h1>
+
+@if (loading)
+{
+    <p><em>Loading…</em></p>
+}
+else if (!string.IsNullOrWhiteSpace(error))
+{
+    <div class="alert alert-danger">@error <button @onclick="Reload">Retry</button></div>
+}
+else
+{
+<EditForm Model="formModel" OnValidSubmit="HandleValidSubmit">
+    <InputText @bind-Value="formModel.Title" />
+    <InputText @bind-Value="formModel.Text" />
+    <button type="submit">Verstuur</button>
+</EditForm>
+
+@code {
+    private MyFormModel formModel = new();
+    private async Task HandleValidSubmit()
+    {
+        var NewNote = new CreateNoteRequest();
+        NewNote.Title = formModel.Title;
+        NewNote.Text = formModel.Text;
+
+        await AddNote(NewNote);
+        await LoadNotes();
+    }
+    public class MyFormModel
+    {
+        public string Title { get; set; } = string.Empty;
+        public string Text { get; set; } = string.Empty;
+    }
+}
+
+<hr />
+
+@if (notes.Count == 0)
+{
+    <p><em>No notes yet.</em></p>
+}
+else
+{
+    <ul>
+        @foreach (var note in notes)
+        {
+            <li>@note.Title : @note.Text : @note.CreatedAt.ToString("yyyy-MM-dd HH:mm") <button
+                    @onclick="() => DeleteNote(note.Id)">Delete</button></li>
+        }
+    </ul>
+}
+}
+
+@code {
+    private List<Note> notes = new();
+    private bool loading = true;
+    private bool submitting = false;
+    private string? error;
+    private CreateNoteRequest newNote = new();
+
+    protected override async Task OnInitializedAsync() => await LoadNotes();
+
+    private async Task LoadNotes()
+    {
+        notes = await Api.GetNotes();
+        loading = false;
+    }
+
+    private async Task Reload() => await LoadNotes();
+
+    private async Task AddNote(CreateNoteRequest req)
+    {
+        await Api.AddNote(req);
+    }
+
+    private async Task DeleteNote(Guid id)
+    {
+        var ok = await JS.InvokeAsync<bool>("confirm", "Delete this note?");
+        if (!ok) return;
+
+        await Api.DeleteNote(id);
+        await LoadNotes();
+    }
+}

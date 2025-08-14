@@ -15,7 +15,7 @@ public static class Endpoints
         var size = pagesize ?? int.MaxValue;
 
         var result = col.Find(Query.All(), 0, size)
-                        .Select(n => new NoteDto(n.Title, n.Text))
+                        .Select(n => new NoteDto(n.Id, n.Title, n.Text, n.CreatedAt))
                         .ToList();
         return Task.FromResult(TypedResults.Ok(result));
     }
@@ -29,11 +29,7 @@ public static class Endpoints
 
     public static IResult DeleteNote(Guid id, ILiteCollection<Note> col)
     {
-        if (col.FindById(id) != null)
-        {
-            col.Delete(id);
-            return Results.NoContent();
-        }
-        return Results.NotFound();
+        var deleted = col.Delete(id);
+        return deleted ? TypedResults.NoContent() : TypedResults.NotFound();
     }
 }

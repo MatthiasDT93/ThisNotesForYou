@@ -1,0 +1,14 @@
+### Create
+POST http://localhost:5088/notes
+Content-Type: application/json
+
+{
+  "title": "Blue Note",
+  "text": "Hello NoSQL"
+}
+
+### List
+GET http://localhost:5088/notes?pageSize=5
+
+### Delete (paste an Id)
+//DELETE http://localhost:5088/notes/{{id}}
