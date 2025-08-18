@@ -35,7 +35,6 @@ else
         NewNote.Text = formModel.Text;
 
         await AddNote(NewNote);
-        await LoadNotes();
     }
     public class MyFormModel
     {
@@ -82,6 +81,7 @@ else
     private async Task AddNote(CreateNoteRequest req)
     {
         await Api.AddNote(req);
+        await LoadNotes();
     }
 
     private async Task DeleteNote(Guid id)
