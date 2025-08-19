@@ -2,13 +2,15 @@
 @using ThisNotesForYou;
 @using Microsoft.AspNetCore.Components.Forms
 @using ThisNotesForYou.Blazor.Services
+@using BootstrapBlazor
+@using BootstrapBlazor.Components
 @inject ThisNotesForYou.Blazor.Services.NotesClient Api
 @inject IJSRuntime JS
 
 
 <PageTitle>Notes</PageTitle>
 
-<h1>Notes</h1>
+<h1 class="text-center text-bg-success p-3">Notes</h1>
 
 @if (loading)
 {
@@ -20,10 +22,11 @@ else if (!string.IsNullOrWhiteSpace(error))
 }
 else
 {
-<EditForm Model="formModel" OnValidSubmit="HandleValidSubmit">
+<EditForm Model="formModel" OnValidSubmit="HandleValidSubmit"
+    class="d-flex flex-row justify-content-center align-items-center gap-2 text-bg-dark p-3">
     <InputText @bind-Value="formModel.Title" />
     <InputText @bind-Value="formModel.Text" />
-    <button type="submit">Verstuur</button>
+    <button class="btn btn-primary" type="submit">Verstuur</button>
 </EditForm>
 
 @code {
@@ -51,11 +54,13 @@ else
 }
 else
 {
-    <ul>
+    <ul class="list-group">
         @foreach (var note in notes)
         {
-            <li>@note.Title : @note.Text : @note.CreatedAt.ToString("yyyy-MM-dd HH:mm") <button
-                    @onclick="() => DeleteNote(note.Id)">Delete</button></li>
+            <li class="list-group-item d-flex justify-content-between align-items-center text-bg-info p-3">
+                <span>@note.Title : @note.Text : @note.CreatedAt.ToString("yyyy-MM-dd HH:mm")</span> <button
+                    class="btn btn-danger btn-sm" @onclick="() => DeleteNote(note.Id)">Delete</button>
+            </li>
         }
     </ul>
 }
